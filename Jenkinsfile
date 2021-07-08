@@ -2,7 +2,7 @@ node {
     stage 'Clone the project'
     git 'https://github.com/at01071988/All-in-OneStore.git'
 
-    dir('spring-jenkins-pipeline') {
+    dir('jenkins-pipeline') {
         stage("Compilation and Analysis") {
             parallel 'Compilation': {
                 if (isUnix()) {
