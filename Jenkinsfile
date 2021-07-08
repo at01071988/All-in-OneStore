@@ -4,21 +4,19 @@ node {
         maven 'local_maven'
         jdk 'local_jdk'
     }
-    stages{
-        stage('Build') { 
+     stage('Build') { 
                 steps {
                    echo 'mvn install'
                 }
             }
-         stage('Test') { 
+     stage('Test') { 
                 steps {
                    echo 'mvn clean test'
                 }
-            }
-         stage('Deploy') { 
+           }
+      stage('Deploy') { 
                 steps { 
                    echo 'This is a minimal pipeline.' 
-                }
-            }
-    }
+               }
+            
 }
