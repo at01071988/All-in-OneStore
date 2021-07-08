@@ -6,16 +6,16 @@ node {
         stage("Compilation and Analysis") {
             parallel 'Compilation': {
                 if (isUnix()) {
-                    sh "./mvnw clean install -DskipTests"
+                    sh "./mvn clean install -DskipTests"
                 } else {
-                    bat "./mvnw.cmd clean install -DskipTests"
+                    bat "./mvn.cmd clean install -DskipTests"
                 }
             }, 'Static Analysis': {
                 stage("Checkstyle") {
                     if (isUnix()) {
-                        sh "./mvnw checkstyle:checkstyle"
+                        sh "./mvn checkstyle:checkstyle"
                     } else {
-                        bat "./mvnw.cmd checkstyle:checkstyle"
+                        bat "./mvn.cmd checkstyle:checkstyle"
                     }
                     step([$class: 'CheckStylePublisher',
                           canRunOnFailed: true,
@@ -34,9 +34,9 @@ node {
                 stage("Running unit tests") {
                     try {
                         if (isUnix()) {
-                            sh "./mvnw test -Punit"
+                            sh "./mvn test"
                         } else {
-                            bat "./mvnw.cmd test -Punit"
+                            bat "./mvn.cmd test -Punit"
                         }
                     } catch(err) {
                         step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*UnitTest.xml'])
@@ -49,9 +49,9 @@ node {
                 stage("Running integration tests") {
                     try {
                         if (isUnix()) {
-                            sh "./mvnw test -Pintegration"
+                            sh "./mvn test -Pintegration"
                         } else {
-                            bat "./mvnw.cmd test -Pintegration"
+                            bat "./mvn.cmd test -Pintegration"
                         }
                     } catch(err) {
                         step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*IntegrationTest.xml'])
