@@ -6,18 +6,6 @@ node {
         stage("Compilation and Analysis") {
             parallel 'Compilation': {
                 "mvn clean install -DskipTests"
-            }, 'Static Analysis': {
-                stage("Checkstyle") {
-                    "mvn checkstyle:checkstyle"
-                    step([$class: 'CheckStylePublisher',
-                          canRunOnFailed: true,
-                          defaultEncoding: '',
-                          healthy: '100',
-                          pattern: '**/target/checkstyle-result.xml',
-                          unHealthy: '90',
-                          useStableBuildAsReference: true
-                    ])
-                }
             }
         }
 
