@@ -5,18 +5,10 @@ node {
     dir('jenkins-pipeline') {
         stage("Compilation and Analysis") {
             parallel 'Compilation': {
-                if (isUnix()) {
-                    sh "./mvn clean install -DskipTests"
-                } else {
-                    bat "./mvn.cmd clean install -DskipTests"
-                }
+                "mvn clean install -DskipTests"
             }, 'Static Analysis': {
                 stage("Checkstyle") {
-                    if (isUnix()) {
-                        sh "./mvn checkstyle:checkstyle"
-                    } else {
-                        bat "./mvn.cmd checkstyle:checkstyle"
-                    }
+                    "mvn checkstyle:checkstyle"
                     step([$class: 'CheckStylePublisher',
                           canRunOnFailed: true,
                           defaultEncoding: '',
@@ -33,11 +25,7 @@ node {
             parallel 'Unit tests': {
                 stage("Running unit tests") {
                     try {
-                        if (isUnix()) {
-                            sh "./mvn test"
-                        } else {
-                            bat "./mvn.cmd test -Punit"
-                        }
+                       "mvn test"
                     } catch(err) {
                         step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*UnitTest.xml'])
                         throw err
@@ -45,22 +33,7 @@ node {
                     step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*UnitTest.xml'])
 
                 }
-            }, 'Integration tests': {
-                stage("Running integration tests") {
-                    try {
-                        if (isUnix()) {
-                            sh "./mvn test -Pintegration"
-                        } else {
-                            bat "./mvn.cmd test -Pintegration"
-                        }
-                    } catch(err) {
-                        step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*IntegrationTest.xml'])
-                        throw err
-                    }
-                    step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*IntegrationTest.xml'])
-                }
             }
-
             stage("Staging") {
                 if (isUnix()) {
                     sh "pid=\$(lsof -i:8989 -t); kill -TERM \$pid || kill -KILL \$pid"
